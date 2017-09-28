@@ -1,11 +1,15 @@
-extern crate web3;
 extern crate bigint;
+extern crate lettre;
+extern crate web3;
 
-use std::{io, fs, env};
-use std::io::BufRead;
 use std::collections::HashMap;
+use std::io::BufRead;
+use std::{io, fs, env};
 
 use bigint::uint::U256;
+use lettre::transport::smtp::SmtpTransportBuilder;
+use lettre::transport::EmailTransport;
+use lettre::email::EmailBuilder;
 use web3::futures::Future;
 use web3::types::Address;
 
@@ -41,10 +45,24 @@ fn main() {
 
                 if previous != balance {
                     println!("New balance for {:?}: {:?}", address, as_eth(&balance));
+                    send_email(&address, &balance);
                 }
             }
         }
     }
+}
+
+
+fn send_email(address: &Address, balance: &U256) {
+    let email = EmailBuilder::new()
+        .from("root@localhost")
+        .to(("tomasz@parity.io", "Tomasz Drwięga"))
+        .subject("ETH Balance Change")
+        .text(&format!("Balance changed for {:?}: {}", address, balance))
+        .build()
+        .unwrap();
+    let mut transport = SmtpTransportBuilder::localhost().unwrap().build();
+    transport.send(email).expect("Should send successfuly.");
 }
 
 fn as_eth(balance: &U256) -> String {
