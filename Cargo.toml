@@ -4,9 +4,6 @@ version = "0.1.0"
 authors = ["Tomasz Drwięga <tomusdrw@gmail.com>"]
 
 [dependencies]
-web3 = "0.0.5"
-lettre = "0.6"
-
-[dependencies.bigint]
-version = "4.2"
-features = ["std"]
+web3 = "0.1.0"
+rustc-hex = "1.0"
+hyper = "0.11"
